@@ -1,0 +1,21 @@
+
+## 0.0.1
+
+* make `appOpenAdUnitId` optional; omit it to disable app open ad preloading and display.
+* change `preloadAllBanners` to default to `false`, loading banners on demand unless startup preloading is explicitly enabled.
+* fix duplicate `AdWidget` mounting when banners are rebuilt during screen rotation or foldable display changes.
+* give each on-demand `AppBannerAd` instance its own `BannerAd` and release it when the widget is disposed.
+* prevent retained pages from blocking banners on newly displayed pages.
+* add on-demand banner loading with unit-and-width caching.
+* add bounded banner retries with 2, 4 and 8 second delays.
+* add standard and large adaptive banner size policies.
+* add structured app open ad diagnostics and loading state getters.
+* update the Android example to Gradle 9.1.0 for JDK 25 builds.
+* upgrade google_mobile_ads to ^9.2.0
+* add macos empty support
+* add web empty support
+* add windows empty support
+* add linux empty support
+* iOS using Swift Package.
+* add banner ad feature.
+* add open app ad feature.

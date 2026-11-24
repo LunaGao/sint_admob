@@ -1,0 +1,21 @@
+name: sint_admob
+description: "Implement AdMob using Sint in Flutter. Easy to use Admob in your Flutter when you use Sint. Only for Android and iOS."
+version: 0.0.1
+homepage: https://github.com/LunaGao/sint_admob
+
+environment:
+  sdk: ^3.10.9
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sint: ^2.3.0
+  google_mobile_ads: ^9.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:

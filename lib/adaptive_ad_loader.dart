@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:sint/sint.dart';
+import 'admob_service.dart';
+
+class AdaptiveAdLoader extends StatefulWidget {
+  const AdaptiveAdLoader({
+    required this.child,
+    this.preloadAllBanners = false,
+    super.key,
+  });
+
+  final Widget? child;
+  final bool preloadAllBanners;
+
+  @override
+  State<AdaptiveAdLoader> createState() => _AdaptiveAdLoaderState();
+}
+
+class _AdaptiveAdLoaderState extends State<AdaptiveAdLoader>
+    with WidgetsBindingObserver {
+  int? _lastRequestedWidth;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this); // Start observing
+    _updateBannerLoadingMode();
+  }
+
+  @override
+  void didUpdateWidget(covariant AdaptiveAdLoader oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.preloadAllBanners != widget.preloadAllBanners) {
+      _lastRequestedWidth = null;
+      _updateBannerLoadingMode();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Clean up
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Sint.find<AdmobService>().showAppOpenAdIfAvailable();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width.truncate();
+    if (widget.preloadAllBanners && width > 0 && width != _lastRequestedWidth) {
+      _lastRequestedWidth = width;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !Sint.isRegistered<AdmobService>()) {
+          return;
+        }
+        // 这里载入所有的广告数据
+        Sint.find<AdmobService>().loadAllAds(width);
+      });
+    }
+    return widget.child ?? const SizedBox.shrink();
+  }
+
+  void _updateBannerLoadingMode() {
+    if (!Sint.isRegistered<AdmobService>()) {
+      return;
+    }
+    Sint.find<AdmobService>().setOnDemandBannerLoading(
+      !widget.preloadAllBanners,
+    );
+  }
+}
