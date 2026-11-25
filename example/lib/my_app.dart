@@ -1,5 +1,5 @@
 import 'package:example/detail_page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sint/sint.dart';
 import 'package:sint_admob/sint_admob.dart';
 
@@ -10,11 +10,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SintMaterialApp(
+    return SintApp(
+      design: SintDesign.material,
       title: 'Admob Example',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: HomePage(),
-      routes: {'/detail': (context) => const DetailPage()},
+      initialRoute: '/',
+      sintPages: [
+        SintPage(name: '/', page: () => const HomePage()),
+        SintPage(name: '/detail', page: () => const DetailPage()),
+      ],
       builder: (context, child) {
         return AdaptiveAdLoader(preloadAllBanners: false, child: child);
       },

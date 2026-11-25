@@ -108,7 +108,7 @@ main.dart
 ```dart
 // ...
 import 'package:example/app_ad_units.dart'; // <-- import sint admob ad units
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sint/sint.dart';
 import 'package:sint_admob/sint_admob.dart'; // <-- import sint admob
 void main() async {
@@ -136,7 +136,7 @@ void main() async {
 
 my_app.dart
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sint/sint.dart';
 import 'package:sint_admob/sint_admob.dart'; // <-- import sint admob
 class MyApp extends StatelessWidget {
@@ -144,7 +144,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SintMaterialApp(
+    return SintApp(
+      design: SintDesign.material,
+      initialRoute: '/',
+      sintPages: [
+        SintPage(name: '/', page: () => const HomePage()),
+        SintPage(name: '/detail', page: () => const DetailPage()),
+      ],
       // ...
       builder: (context, child) {
         return AdaptiveAdLoader(
@@ -161,7 +167,7 @@ home_page.dart
 ```dart
 // ...
 import 'package:example/app_ad_units.dart'; // <-- import sint admob ad units
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sint_admob/sint_admob.dart'; // <-- import sint admob
 
 class HomePage extends StatelessWidget {

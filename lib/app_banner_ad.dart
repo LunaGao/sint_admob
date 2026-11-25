@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:sint/sint.dart';
 import 'package:sint_admob/admob_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';

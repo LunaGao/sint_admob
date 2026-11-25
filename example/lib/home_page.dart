@@ -1,5 +1,5 @@
 import 'package:example/app_ad_units.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sint/sint.dart';
 import 'package:sint_admob/sint_admob.dart';
 

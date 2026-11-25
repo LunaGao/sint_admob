@@ -1,6 +1,6 @@
 import 'package:example/app_ad_units.dart';
 import 'package:example/my_app.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:sint/sint.dart';
 
 // import sint admob
