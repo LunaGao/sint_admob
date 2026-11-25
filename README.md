@@ -1,144 +1,145 @@
 ![sint_admob](https://socialify.git.ci/LunaGao/sint_admob/image?custom_language=Flutter&description=1&font=Raleway&forks=1&issues=1&language=1&name=1&owner=1&pattern=Signal&pulls=1&stargazers=1&theme=Auto)
 
-
+[![Pub Version](https://img.shields.io/pub/v/sint_admob.svg)](https://pub.dev/packages/sint_admob)
 [![Bless](https://img.shields.io/badge/bless-God-brightgreen)](https://lunagao.github.io/BlessYourCodeTag/)
-![Pub Version](https://img.shields.io/pub/v/sint_admob)
 
-Easy to implement AdMob using Sint in Flutter. Only support __Android__ and __iOS__.
-
-> __Note__: **0.1.0 version and above** are using for **Flutter 3.44.0 and above** (iOS package is using Swift Package). If you are using Flutter 3.41.9 and below (iOS using Pod), please use 0.0.2 version.
+AdMob banner and app open ads for Flutter apps using [Sint](https://pub.dev/packages/sint). Supports Android and iOS.
 
 ## Features
 
-* Banner and app open ads for Android and iOS.
-* Startup preloading or on-demand banner loading.
-* Banner caching by ad unit and width.
-* Bounded retries with 2, 4 and 8 second backoff delays.
-* Standard and large adaptive banner size policies.
-* Structured app open diagnostics without an analytics dependency.
+- Adaptive banner ads with standard and large size policies.
+- On-demand banner loading or startup preloading.
+- Per-widget caching by ad unit and width, with automatic disposal.
+- Bounded retries with 2, 4, and 8 second backoff delays.
+- Optional app open ads with expiration handling and lifecycle integration.
+- Structured app open diagnostics without an analytics dependency.
+- Test ad units and ad enablement controlled by Dart build flags.
 
-| Feature | Screenshot | Feature | Screenshot |
-| --- | --- | --- | --- |
-| open app ad | ![open app ad](https://raw.githubusercontent.com/LunaGao/sint_admob/main/img/img1.png) | banner ad | ![banner ad](https://raw.githubusercontent.com/LunaGao/sint_admob/main/img/img2.png) |
+| App open ad | Banner ad |
+| --- | --- |
+| ![App open ad](https://raw.githubusercontent.com/LunaGao/sint_admob/main/img/img1.png) | ![Banner ad](https://raw.githubusercontent.com/LunaGao/sint_admob/main/img/img2.png) |
+
+## Requirements
+
+- Flutter 3.47.0 or later.
+- Dart 3.13.0 or later.
+- An AdMob account and registered Android or iOS app.
+- The platform requirements of [`google_mobile_ads`](https://pub.dev/packages/google_mobile_ads).
+
+Ad loading is supported only on Android and iOS. Initialization is a no-op on other platforms.
 
 ## Installation
 
-Add `sint_admob` to your `pubspec.yaml`:
+Add the package and the dependencies used by the examples to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sint_admob: ^0.4.0
+  sint_admob: ^0.0.1
+  sint: ^2.3.0
+  material_ui: ^1.11.1
 ```
 
-Then run `flutter pub get`.
+Then run:
 
-## Getting started
+```bash
+flutter pub get
+```
 
-Steps: 
-* Import this package.
-* Add admob application ID
-  * iOS Info.plist
-  * Android AndroidManifest.xml
-* Add app_ad_units.dart file.
-* Modify main.dart file.
-* Modify my_app.dart file.
-* Modify page, add banner ad.
+`material_ui` is needed only when using the standalone Material widgets shown below.
 
+## Platform setup
+
+Follow the [AdMob Flutter quick start](https://developers.google.com/admob/flutter/quick-start) to register your app and configure its AdMob application ID. The IDs below are Google's test application IDs; replace them with your production IDs when releasing your app.
+
+### iOS
+
+Add `GADApplicationIdentifier` to `ios/Runner/Info.plist`:
+
+```xml
+<key>GADApplicationIdentifier</key>
+<string>ca-app-pub-3940256099942544~1458002511</string>
+```
+
+### Android
+
+Add the application metadata inside `<application>` in `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="ca-app-pub-3940256099942544~3347511713"/>
+```
 
 ## Usage
 
-According to the [official documentation](https://developers.google.com/admob/flutter/quick-start),
+### 1. Register ad units
 
-Configure your AdMob application ID.
-* Add iOS Info.plist.
-* Add AndroidManifest.xml.
+Create `app_ad_units.dart`. These are Google's test banner units; use your own units for production builds.
 
-#### ios/Runner/Info.plist
-```xml
-<plist version="1.0">
-<dict>
-	<!-- ... -->
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~1458002511</string>
-</dict>
-</plist>
-```
-
-#### android/app/src/main/AndroidManifest.xml
-```xml
-<manifest>
-    <application>
-        <!-- ... -->
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
-    </application>
-</manifest>
-```
-
-
-## Code example
-
-Add app_ad_units.dart file
 ```dart
 import 'package:sint_admob/sint_admob.dart';
 
 class AppAdUnits {
-  static List<AdmobUnitId> adUnits = [
-    AppAdUnits.homeBanner,
-    AppAdUnits.detailBanner,
-    /// ... add more AdmobUnitId
-  ];
-
-  static AdmobUnitId homeBanner = AdmobUnitId(
+  static final homeBanner = AdmobUnitId(
     androidUnitId: 'ca-app-pub-3940256099942544/9214589741',
     iosUnitId: 'ca-app-pub-3940256099942544/2435281174',
   );
 
-  static AdmobUnitId detailBanner = AdmobUnitId(
+  static final detailBanner = AdmobUnitId(
     androidUnitId: 'ca-app-pub-3940256099942544/9214589741',
     iosUnitId: 'ca-app-pub-3940256099942544/2435281174',
   );
 
-  /// ... add more AdmobUnitId
+  static final adUnits = [homeBanner, detailBanner];
 }
 ```
 
-main.dart
+### 2. Initialize the service
+
+Initialize and register `AdmobService` before `runApp`. The app open ad unit is optional; omit it to disable app open ads.
+
 ```dart
-// ...
-import 'package:example/app_ad_units.dart'; // <-- import sint admob ad units
+import 'package:example/app_ad_units.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:sint/sint.dart';
-import 'package:sint_admob/sint_admob.dart'; // <-- import sint admob
-void main() async {
-  // ensure initialized
-  WidgetsFlutterBinding.ensureInitialized(); // <-- ensure initialized, MUST ADD THIS
-  // ...
-  // init admob service
+import 'package:sint_admob/sint_admob.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   await Sint.putAsync(
     () => AdmobService().init(
       adUnitIds: AppAdUnits.adUnits,
-      // Optional: omit this parameter to disable app open ads.
-      // using for production
       appOpenAdUnitId: AdmobUnitId(
-        androidUnitId: 'OPEN_APP_AD_UNIT_ID_ANDROID',
-        iosUnitId: 'OPEN_APP_AD_UNIT_ID_IOS',
+        androidUnitId: 'YOUR_ANDROID_APP_OPEN_AD_UNIT_ID',
+        iosUnitId: 'YOUR_IOS_APP_OPEN_AD_UNIT_ID',
       ),
-      bannerSizePolicy: AdmobBannerSizePolicy.largeAdaptive,
+      bannerSizePolicy: AdmobBannerSizePolicy.standardAdaptive,
       onDiagnostic: (event) => debugPrint(event.toString()),
     ),
   );
-  // ...
+
   runApp(const MyApp());
 }
 ```
 
-my_app.dart
+To disable app open ads:
+
+```dart
+await Sint.putAsync(
+  () => AdmobService().init(adUnitIds: AppAdUnits.adUnits),
+);
+```
+
+### 3. Add the lifecycle and loading wrapper
+
+Place `AdaptiveAdLoader` around your app's router content. It loads registered banners when preloading is enabled and shows an available app open ad when the app resumes.
+
 ```dart
 import 'package:material_ui/material_ui.dart';
 import 'package:sint/sint.dart';
-import 'package:sint_admob/sint_admob.dart'; // <-- import sint admob
+import 'package:sint_admob/sint_admob.dart';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -151,7 +152,6 @@ class MyApp extends StatelessWidget {
         SintPage(name: '/', page: () => const HomePage()),
         SintPage(name: '/detail', page: () => const DetailPage()),
       ],
-      // ...
       builder: (context, child) {
         return AdaptiveAdLoader(
           preloadAllBanners: false,
@@ -163,24 +163,26 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-home_page.dart
+### 4. Display a banner
+
+Add `AppBannerAd` wherever a banner should appear:
+
 ```dart
-// ...
-import 'package:example/app_ad_units.dart'; // <-- import sint admob ad units
+import 'package:example/app_ad_units.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:sint_admob/sint_admob.dart'; // <-- import sint admob
+import 'package:sint_admob/sint_admob.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('AdMob example')),
       body: Column(
-        mainAxisAlignment: .center,
         children: [
-          // ...
-          AppBannerAd(AppAdUnits.homeBanner), // <-- add sint admob banner ad
-          // ...
+          AppBannerAd(AppAdUnits.homeBanner),
+          const Expanded(child: Center(child: Text('Page content'))),
         ],
       ),
     );
@@ -188,61 +190,68 @@ class HomePage extends StatelessWidget {
 }
 ```
 
+The widget reserves space only after its banner has loaded.
+
 ## Banner loading
 
-By default, `preloadAllBanners` is `false`, so no registered banners are preloaded when the app starts or the screen width changes. Each banner is loaded only when its `AppBannerAd` is mounted.
+`preloadAllBanners` defaults to `false`. In this mode, each `AppBannerAd` loads its banner when mounted and owns a separate `BannerAd`, which is disposed with the widget. Cache entries are scoped by widget instance, ad unit, and width, so rebuilds and width changes do not mount the same `AdWidget` twice.
 
-Set `preloadAllBanners: true` to preload every registered banner at startup and when the screen width changes. In on-demand mode, loaded banners are cached per widget instance by ad unit and width, so rebuilding the same widget does not request the same banner again. Each widget instance owns a separate `BannerAd`, which is released after the widget is disposed and is never shared with another `AdWidget`. A width change creates a separate cache entry and leaves other banner sizes untouched.
+Set `preloadAllBanners: true` to load every registered banner at startup and whenever the available width changes.
 
-The existing full-loading API remains available:
+A failed load is retried after 2, 4, and 8 seconds, for at most three retries. Timers and ads are released when their owner or the service is disposed.
 
-```dart
-Sint.find<AdmobService>().loadAllAds(width);
-```
-
-A specific banner can also be loaded explicitly in either mode:
+For manual loading, the service also exposes:
 
 ```dart
-Sint.find<AdmobService>().ensureBannerLoaded(AppAdUnits.homeBanner, width);
+final adService = Sint.find<AdmobService>();
+
+await adService.ensureBannerLoaded(AppAdUnits.homeBanner, width);
+await adService.loadAllAds(width);
 ```
 
-A failed banner load is retried after 2, 4 and 8 seconds, with at most three retries. After the final failure, requests stop until the banner widget is mounted again or `ensureBannerLoaded` is called explicitly. Timers are cancelled when their cache entry or the service is disposed.
+## Banner size policies
 
-## Banner size policy
-
-The default policy is `AdmobBannerSizePolicy.largeAdaptive`, which preserves the existing behavior. Use `AdmobBannerSizePolicy.standardAdaptive` to run a standard adaptive banner comparison:
+The default is `AdmobBannerSizePolicy.largeAdaptive`. Select the standard adaptive policy during initialization if it better fits your layout:
 
 ```dart
 AdmobService().init(
   adUnitIds: AppAdUnits.adUnits,
-  appOpenAdUnitId: appOpenAdUnitId,
   bannerSizePolicy: AdmobBannerSizePolicy.standardAdaptive,
 );
 ```
 
-Compare layouts, impressions, match rate and eCPM separately before changing the default in an application.
-
-## Optional app open ads
-
-Omit `appOpenAdUnitId` to disable app open ads. The service will neither preload nor show them when the app resumes, while banner ads continue to work normally. This also applies when `DEBUG_AD=true`.
-
-```dart
-AdmobService().init(
-  adUnitIds: AppAdUnits.adUnits,
-);
-```
+Compare layout, impressions, match rate, and eCPM before changing the policy in a production app.
 
 ## App open diagnostics
 
-Pass `onDiagnostic` to `AdmobService.init` to receive `AdmobDiagnosticEvent` objects for app open load, availability, expiration, show and dismiss events. Events include the ad unit, timestamp, relevant duration and, for failures, the AdMob error code, domain and message.
+Pass `onDiagnostic` to `AdmobService.init` to receive `AdmobDiagnosticEvent` objects for load, availability, expiration, show, failure, and dismiss events. Events include the ad unit, timestamp, relevant duration, and AdMob error details when available.
 
-The service also exposes `isAppOpenAdLoading`, `isAppOpenAdAvailable`, `isAppOpenAdShowing` and `appOpenLoadTime`. No analytics dependency is added; applications can decide how to record these events.
+The service also exposes `isAppOpenAdLoading`, `isAppOpenAdAvailable`, `isAppOpenAdShowing`, and `appOpenLoadTime`. No analytics dependency is added.
 
-## Android example
+## Build flags
 
-The included example enables on-demand banner loading, standard adaptive banners and app open diagnostics. Its Android build uses Gradle 9.1.0 and has been verified with JDK 25 on Android 16. Java source and target compatibility remain at Java 17.
+| Flag | Default | Behavior |
+| --- | --- | --- |
+| `ENABLE_AD` | `true` | Set to `false` to disable all ad initialization and display. |
+| `DEBUG_AD` | `false` | Set to `true` to use Google's test ad units instead of configured production units. |
 
-Run the example with AdMob test units:
+Run with test ads:
+
+```bash
+flutter run --dart-define=DEBUG_AD=true
+```
+
+Run with ads disabled:
+
+```bash
+flutter run --dart-define=ENABLE_AD=false
+```
+
+Production ad units are used by default. Always validate your app with test ads before using production units.
+
+## Example
+
+The included example demonstrates on-demand banners, app open ads, diagnostics, and test ad units:
 
 ```bash
 cd example
@@ -250,50 +259,10 @@ flutter pub get
 flutter run --dart-define=DEBUG_AD=true
 ```
 
-Build the debug APK:
+## Contributing
 
-```bash
-flutter build apk --debug
-```
+Issues and pull requests are welcome on [GitHub](https://github.com/LunaGao/sint_admob).
 
-## VS Code launch.json
+## License
 
-You can use VS Code launch configurations to enable or disable ads and select test or production ad units. Production ad units are used by default.
-
-launch.json example
-```json
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "sint_admob [disable ad]",
-            "request": "launch",
-            "type": "dart",
-            "args": [
-                "--dart-define",
-                "ENABLE_AD=false"
-            ]
-        },
-        {
-            "name": "sint_admob [use debug ad]",
-            "request": "launch",
-            "type": "dart",
-            "args": [
-                "--dart-define",
-                "DEBUG_AD=true"
-            ]
-        },
-        {
-            "name": "sint_admob [use production ad]",
-            "request": "launch",
-            "type": "dart"
-        }
-    ]
-}
-```
-
-## Additional information
-
-Welcome to contribute to this package.
-
-https://github.com/LunaGao/sint_admob
+BSD 2-Clause. See [LICENSE](https://github.com/LunaGao/sint_admob/blob/main/LICENSE).

@@ -1,21 +1,15 @@
-
 ## 0.0.1
 
-* make `appOpenAdUnitId` optional; omit it to disable app open ad preloading and display.
-* change `preloadAllBanners` to default to `false`, loading banners on demand unless startup preloading is explicitly enabled.
-* fix duplicate `AdWidget` mounting when banners are rebuilt during screen rotation or foldable display changes.
-* give each on-demand `AppBannerAd` instance its own `BannerAd` and release it when the widget is disposed.
-* prevent retained pages from blocking banners on newly displayed pages.
-* add on-demand banner loading with unit-and-width caching.
-* add bounded banner retries with 2, 4 and 8 second delays.
-* add standard and large adaptive banner size policies.
-* add structured app open ad diagnostics and loading state getters.
-* update the Android example to Gradle 9.1.0 for JDK 25 builds.
-* upgrade google_mobile_ads to ^9.2.0
-* add macos empty support
-* add web empty support
-* add windows empty support
-* add linux empty support
-* iOS using Swift Package.
-* add banner ad feature.
-* add open app ad feature.
+Initial release of `sint_admob`.
+
+- Add adaptive banner ads and optional app open ads for Android and iOS.
+- Integrate ad lifecycle and dependency registration with Sint.
+- Support on-demand banner loading and optional startup preloading.
+- Cache banners by widget instance, ad unit, and width, with automatic disposal.
+- Retry failed banner loads up to three times with 2, 4, and 8 second delays.
+- Add standard and large adaptive banner size policies.
+- Add app open ad expiration handling, loading state getters, and structured diagnostics.
+- Add `ENABLE_AD` and `DEBUG_AD` build flags for disabling ads or using Google's test ad units.
+- Use `google_mobile_ads` 9.2.0.
+- Include Android and iOS examples with test ad units; iOS uses Swift Package Manager.
+- No-op ad initialization on unsupported platforms.

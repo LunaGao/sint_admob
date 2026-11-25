@@ -1,11 +1,19 @@
 name: sint_admob
-description: "Implement AdMob using Sint in Flutter. Easy to use Admob in your Flutter when you use Sint. Only for Android and iOS."
+description: AdMob banner and app open ads for Flutter apps using Sint, with adaptive sizing, caching, retries, and diagnostics on Android and iOS.
 version: 0.0.1
 homepage: https://github.com/LunaGao/sint_admob
+repository: https://github.com/LunaGao/sint_admob
+issue_tracker: https://github.com/LunaGao/sint_admob/issues
+topics:
+  - admob
+  - advertising
+  - banner-ads
+  - app-open-ads
+  - sint
 
 environment:
-  sdk: ^3.10.9
-  flutter: ">=1.17.0"
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
 
 dependencies:
   flutter:
